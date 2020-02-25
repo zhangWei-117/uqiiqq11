@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cblue.mapper.ShopMapper">
+
+    <resultMap id="aa" type="shop">
+        <id column="sid" property="sid"/>
+        <result column="sname" property="sname"/>
+        <result column="outtime" property="outtime"/>
+        <result column="num" property="num"/>
+        <result column="img" property="img"/>
+        <result column="lid" property="lid"/>
+        <association property="type" javaType="type">
+            <id column="lid" property="lid"/>
+            <result column="lname" property="lname"/>
+        </association>
+    </resultMap>
+    <select id="getAll" parameterType="custom" resultMap="aa">
+        SELECT * FROM shop s,TYPE t WHERE s.lid=t.lid
+        <if test="start!=null and start!=''">
+            and num BETWEEN #{start} AND #{end}
+        </if>
+    </select>
+
+    <insert id="add" parameterType="shop">
+        insert into shop values (null,#{sname},#{outtime},#{num},#{img},#{lid})
+    </insert>
+
+    <update id="update" parameterType="shop">
+        update shop
+        <set>
+            <if test="sname!=null and sname!=''">
+                sname=#{sname},
+            </if>
+            <if test="outtime!=null">
+                outtime=#{outtime},
+            </if>
+            <if test="num!=null and num!=''">
+                num=#{num},
+            </if>
+            <if test="img!=null and img!=''">
+                img=#{img},
+            </if>
+            <if test="lid!=null and lid!=''">
+                lid=#{lid}
+            </if>
+        </set>
+        where sid=#{sid}
+    </update>
+
+    <select id="getById" parameterType="int" resultMap="aa">
+        SELECT * FROM shop s,TYPE t WHERE s.lid=t.lid and sid=#{id}
+    </select>
+
+    <select id="getType" resultType="type">
+        select * from type
+    </select>
+</mapper>
